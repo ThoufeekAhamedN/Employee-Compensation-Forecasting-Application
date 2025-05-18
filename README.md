@@ -8,8 +8,6 @@ csc Program.cs
 To run the executable file, run the following command.
 ``` Program ```
 
-![Dashboard Screenshot](./screenshots/dashboard.png)
-
 A web application for analyzing employee compensation data with simulation capabilities.
 
 ## Table of Contents
@@ -46,11 +44,11 @@ A web application for analyzing employee compensation data with simulation capab
    USE EmployeeCompensationdb;
    ```
 
-2. Import the provided SQL file:
+2. Import the provided SQL files:
    ```folder
    (./MySQL/)
    ```
-3. Import the provided SQL file:
+3. Import the provided Stored Procedure files:
    ```folder
    (./MySQL/Stored Procedure)
    ```
@@ -123,5 +121,8 @@ A web application for analyzing employee compensation data with simulation capab
 
 ### Experience Distribution
 ![Experience](./screenshots/experience.png)
+
+### Increment Simulation
+![Experience](./screenshots/increment.png)
 
 ```
