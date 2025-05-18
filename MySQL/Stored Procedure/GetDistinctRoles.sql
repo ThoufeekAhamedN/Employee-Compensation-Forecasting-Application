@@ -1,0 +1,8 @@
+DELIMITER $$
+
+CREATE PROCEDURE GetDistinctRoles()
+BEGIN
+    SELECT DISTINCT Role FROM employee_data;
+END$$
+
+DELIMITER ;
