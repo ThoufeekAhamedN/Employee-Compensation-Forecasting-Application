@@ -1,0 +1,203 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --dark-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --danger-color: #e74c3c;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.dashboard-header {
+    background-color: var(--dark-color);
+    color: white;
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+.card-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+
+.filter-section {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    margin-bottom: 2rem;
+}
+
+table.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 1rem;
+}
+
+    table.data-table th {
+        background-color: var(--light-color);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    table.data-table th,
+    table.data-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table.data-table tr:hover {
+        background-color: rgba(52, 152, 219, 0.1);
+    }
+
+.badge-active {
+    background-color: var(--secondary-color);
+}
+
+.badge-inactive {
+    background-color: var(--danger-color);
+}
+
+.tab-content {
+    padding: 1.5rem 0;
+}
+
+.nav-tabs .nav-link {
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+    .nav-tabs .nav-link.active {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 300px;
+    }
+
+    .filter-section {
+        padding: 1rem;
+    }
+
+    table.data-table th,
+    table.data-table td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation for loading */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Loading spinner */
+.spinner-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner {
+    width: 3rem;
+    height: 3rem;
+}
+
+.btn-export {
+    background: white;
+}
+/* Add to your existing CSS */
+#customIncrementsPanel {
+    transition: all 0.3s ease;
+}
+
+.increment-control {
+    margin-bottom: 10px;
+}
+
+    .increment-control label {
+        font-weight: 500;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+.btn-group-compensation {
+    display: flex;
+}
+
+    .btn-group-compensation .btn {
+        flex: 1;
+    }

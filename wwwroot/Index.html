@@ -1,0 +1,277 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Compensation Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div class="spinner-container" id="loadingSpinner">
+        <div class="spinner-border text-light spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <h1><i class="bi bi-people-fill"></i> Employee Compensation Forecasting Dashboard</h1>
+                    <p class="mb-0">Comprehensive view of employee compensation and experience distribution</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Filter Section -->
+        <section class="filter-section fade-in">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="roleFilter" class="form-label">Role</label>
+                    <select class="form-select" id="roleFilter">
+                        <option value="">All Roles</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="locationFilter" class="form-label">Location</label>
+                    <select class="form-select" id="locationFilter">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+                <!--<div class="col-md-2 mb-3">
+                    <label for="globalIncrement" class="form-label">Global Increment (%)</label>
+                    <input type="number" class="form-control" id="globalIncrement" min="0" max="100" step="1" value="0">
+                </div>-->
+                <!-- Add this to your filter section, near the location filter -->
+                <div class="col-md-3 mb-3">
+                    <label for="compensationMode" class="form-label">Increment Mode</label>
+                    <div class="input-group">
+                        <div class="btn-group w-100" role="group" id="compensationMode">
+                            <input type="radio" class="btn-check" name="compensationMode" id="globalMode" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary" for="globalMode" data-bs-toggle="tooltip" title="Apply same increment to all">
+                                <i class="bi bi-globe"></i> Global
+                            </label>
+
+                            <input type="radio" class="btn-check" name="compensationMode" id="customMode" autocomplete="off" onclick="initializeLocationIncrementInputs()">
+                            <label class="btn btn-outline-primary" for="customMode" data-bs-toggle="tooltip" title="Set custom increments by location">
+                                <i class="bi bi-sliders"></i> Custom
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3" id="globalIncrementContainer">
+                    <label for="globalIncrement" class="form-label">Global Increment (%)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="globalIncrement" min="0" max="100" step="1" value="0">
+                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+
+                <!-- Custom Increments Panel (initially hidden) -->
+                <div class="col-12 mb-3 d-none" id="customIncrementsPanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-pin-map"></i> Location-Specific Increments
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="locationIncrementsContainer">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3 d-flex align-items-end">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="includeInactive">
+                        <label class="form-check-label" for="includeInactive">Include Inactive</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary" id="applyFilters">
+                        <i class="bi bi-funnel"></i> Apply Filters
+                    </button>
+                    <button class="btn btn-outline-secondary ms-2" id="resetFilters">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Tabs -->
+        <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="compensation-tab" data-bs-toggle="tab" data-bs-target="#compensation" type="button" role="tab">
+                    <i class="bi bi-cash-stack"></i> Compensation Analysis
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab">
+                    <i class="bi bi-graph-up"></i> Experience Distribution
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="dashboardTabsContent">
+            <!-- Compensation Tab -->
+            <div class="tab-pane fade show active" id="compensation" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="bi bi-bar-chart-line"></i> Compensation by Location
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="compensationChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="bi bi-info-circle"></i> Compensation Stats
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="compensationStats">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-table"></i> Employee Details</span>
+                        <button class="btn btn-sm btn-export btn-outline-primary" id="exportData">
+                            <i class="bi bi-download"></i> Export to CSV
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Role</th>
+                                        <th>Location</th>
+                                        <th>Experience</th>
+                                        <th>Compensation (INR)</th>
+                                        <th>Updated Compensation</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employeesTable">
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Employee pagination">
+                            <ul class="pagination justify-content-center" id="pagination">
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experience Tab -->
+            <div class="tab-pane fade" id="experience" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="groupBy" class="form-label">Group By</label>
+                        <select class="form-select" id="groupBy">
+                            <option value="">None</option>
+                            <option value="Location">Location</option>
+                            <option value="Role">Role</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="experienceChartType" class="form-label">Chart Type</label>
+                        <select class="form-select" id="experienceChartType">
+                            <option value="bar">Bar Chart</option>
+                            <option value="pie">Pie Chart</option>
+                            <option value="doughnut">Doughnut Chart</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="updateExperience">
+                            <i class="bi bi-arrow-repeat"></i> Update View
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="bi bi-pie-chart"></i> Experience Distribution
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="experienceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="bi bi-table"></i> Experience Summary
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Experience</th>
+                                                <th id="groupByHeader">-</th>
+                                                <th>Count</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="experienceTable">
+                                            <!-- Will be populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-3 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Employee Analytics Dashboard</h5>
+                    <p>Providing insights into your workforce composition and compensation.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">© 2023 TechSolve Inc. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+    <script src="/js/site.js"></script>
+    
+</body>
+</html>
