@@ -38,21 +38,17 @@ A web application for analyzing employee compensation data with simulation capab
 ## Setup Instructions
 
 ### Database Setup
-1. Create a new MySQL database:
+1. Open your MySQL client (e.g., MySQL Workbench, CLI) and execute the following commands to create and select the database:
    ```sql
    CREATE DATABASE EmployeeCompensationdb;
    USE EmployeeCompensationdb;
    ```
 
-2. Import the provided SQL files:
+2. Import the required SQL scripts to create the necessary tables and stored procedures.
    ```folder
    (./MySQL/)
    ```
-3. Import the provided Stored Procedure files:
-   ```folder
-   (./MySQL/Stored Procedure)
-   ```
-4. Configure connection string in `appsettings.json`:
+3. Configure connection string in `appsettings.json`:
    ```json
    {
      "ConnectionStrings": {
