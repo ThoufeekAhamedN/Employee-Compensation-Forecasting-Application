@@ -140,7 +140,6 @@ table.data-table {
     }
 }
 
-/* Animation for loading */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -157,7 +156,6 @@ table.data-table {
     animation: fadeIn 0.5s ease-out;
 }
 
-/* Loading spinner */
 .spinner-container {
     display: none;
     position: fixed;
@@ -179,7 +177,7 @@ table.data-table {
 .btn-export {
     background: white;
 }
-/* Add to your existing CSS */
+
 #customIncrementsPanel {
     transition: all 0.3s ease;
 }
