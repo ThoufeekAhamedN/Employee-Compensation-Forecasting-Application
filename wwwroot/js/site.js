@@ -9,7 +9,6 @@ let currentPage = 1;
 const itemsPerPage = 10;
 let allEmployees = [];
 
-// DOM elements
 const loadingSpinner = document.getElementById('loadingSpinner');
 const currentDateEl = document.getElementById('currentDate');
 const roleFilter = document.getElementById('roleFilter');
@@ -28,9 +27,7 @@ const updateExperienceBtn = document.getElementById('updateExperience');
 const experienceTable = document.getElementById('experienceTable');
 const groupByHeader = document.getElementById('groupByHeader');
 
-// Initialize the application
 document.addEventListener('DOMContentLoaded', async () => {
-        // Load initial data
     await Promise.all([
         loadRoles(),
         loadLocations(),
@@ -39,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadExperienceGroups()
     ]);
 
-    // Set up event listeners
+    // event listeners
     applyFiltersBtn.addEventListener('click', async () => {
         await loadEmployees();
         await loadCompensationChart();
@@ -60,17 +57,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-// Show loading spinner
 function showLoading() {
     loadingSpinner.style.display = 'flex';
 }
-
-// Hide loading spinner
 function hideLoading() {
     loadingSpinner.style.display = 'none';
 }
 
-// Load roles dropdown
+// roles dropdown
 async function loadRoles() {
     try {
         showLoading();
@@ -91,7 +85,7 @@ async function loadRoles() {
     }
 }
 
-// Load locations dropdown
+// locations dropdown
 async function loadLocations() {
     try {
         showLoading();
@@ -112,7 +106,7 @@ async function loadLocations() {
     }
 }
 
-// Load employees table with pagination
+// employees table with pagination
 async function loadEmployees(page = 1) {
     try {
         showLoading();
@@ -135,10 +129,9 @@ async function loadEmployees(page = 1) {
         const endIndex = Math.min(startIndex + itemsPerPage, allEmployees.length);
         const paginatedEmployees = allEmployees.slice(startIndex, endIndex);
 
-        // Clear existing table rows
         employeesTable.innerHTML = '';
 
-        // Add new rows
+        // new rows
         paginatedEmployees.forEach(employee => {
             const row = document.createElement('tr');
             row.className = 'fade-in';
@@ -160,10 +153,7 @@ async function loadEmployees(page = 1) {
             employeesTable.appendChild(row);
         });
 
-        // Update pagination
         updatePagination(totalPages, page);
-
-        // Load compensation stats
         loadCompensationStats();
     } catch (error) {
         console.error('Error loading employees:', error);
@@ -239,8 +229,6 @@ async function loadCompensationChart() {
         // Prepare chart data
         const locations = stats.map(stat => stat.location);
         const averages = stats.map(stat => stat.averageCompensation);
-
-        // Destroy previous chart if it exists
         if (compensationChart) {
             compensationChart.destroy();
         }
@@ -366,10 +354,7 @@ async function loadExperienceGroups() {
         const response = await fetch(url);
         const groups = await response.json();
 
-        // Update table header
         groupByHeader.textContent = groupByValue || '-';
-
-        // Clear and populate table
         experienceTable.innerHTML = '';
 
         groups.forEach(group => {
@@ -395,21 +380,16 @@ async function loadExperienceGroups() {
     }
 }
 
-// Update experience chart
 function updateExperienceChart(groups, groupByValue, chartType) {
-    // Destroy previous chart if it exists
     if (experienceChart) {
         experienceChart.destroy();
     }
 
     const ctx = document.getElementById('experienceChart').getContext('2d');
-
-    // Prepare data based on grouping
     let datasets = [];
     let labels = [];
 
     if (!groupByValue) {
-        // Simple chart with experience ranges
         labels = groups.map(g => g.experienceRange);
         datasets = [{
             label: 'Employee Count',
@@ -506,12 +486,8 @@ function updateExperienceChart(groups, groupByValue, chartType) {
             } : undefined
         }
     };
-
-    // Create new chart
     experienceChart = new Chart(ctx, config);
 }
-
-// Generate chart colors
 function getChartColors(count, opacity = 1) {
     const colors = [];
     const hueStep = 360 / count;
@@ -523,8 +499,6 @@ function getChartColors(count, opacity = 1) {
 
     return colors;
 }
-
-// Reset all filters
 function resetFilters() {
     roleFilter.value = '';
     locationFilter.value = '';
@@ -533,15 +507,11 @@ function resetFilters() {
     loadEmployees();
     loadCompensationChart();
 }
-
-// Export data to CSV
 function exportToCSV() {
     if (allEmployees.length === 0) {
         showError('No data to export');
         return;
     }
-
-    // Prepare data for export
     const dataToExport = allEmployees.map(emp => ({
         Name: emp.name,
         Role: emp.role,
@@ -551,7 +521,6 @@ function exportToCSV() {
         Status: emp.isActive ? 'Active' : 'Inactive'
     }));
 
-    // Create CSV
     const csv = Papa.unparse(dataToExport);
 
     // Download CSV
@@ -565,24 +534,17 @@ function exportToCSV() {
     document.body.removeChild(link);
 }
 
-// Show error message
 function showError(message) {
-    // You could implement a more sophisticated error display
     alert(message);
 }
-// Add these variables to your global variables section
-let compensationMode = 'global'; // 'global' or 'custom'
+let compensationMode = 'global';
 let locationIncrements = {};
 
-// Add this to your DOMContentLoaded event listener
 document.getElementById('globalMode').addEventListener('change', updateCompensationModeUI);
 document.getElementById('customMode').addEventListener('change', updateCompensationModeUI);
 
-// Add these new functions
 function updateCompensationModeUI() {
     compensationMode = document.getElementById('globalMode').checked ? 'global' : 'custom';
-
-    // Show/hide appropriate controls
     document.getElementById('globalIncrementContainer').classList.toggle('d-none', compensationMode === 'custom');
     document.getElementById('customIncrementsPanel').classList.toggle('d-none', compensationMode === 'global');
 }
@@ -608,7 +570,6 @@ function initializeLocationIncrementInputs() {
         </div>
     `).join('');
 
-    // Add event listeners to location inputs
     document.querySelectorAll('.location-increment-input').forEach(input => {
         input.addEventListener('change', function () {
             const location = this.id.replace('loc-inc-', '').replace(/-/g, ' ');
