@@ -72,7 +72,7 @@ A web application for analyzing employee compensation data with simulation capab
 
 2. Access the frontend:
    ```
-   https://localhost:5001/index.html
+   https://localhost:7082/index.html
    ```
 
 ## User Stories
