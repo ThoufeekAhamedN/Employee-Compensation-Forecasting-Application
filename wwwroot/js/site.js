@@ -1,8 +1,7 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-// Global variables
 const apiBaseUrl = 'https://localhost:7082/api/employees'; // Update with your API URL
 let compensationChart, experienceChart;
 let currentPage = 1;
@@ -27,7 +26,9 @@ const updateExperienceBtn = document.getElementById('updateExperience');
 const experienceTable = document.getElementById('experienceTable');
 const groupByHeader = document.getElementById('groupByHeader');
 
+// Initialize the application
 document.addEventListener('DOMContentLoaded', async () => {
+        
     await Promise.all([
         loadRoles(),
         loadLocations(),
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadExperienceGroups()
     ]);
 
-    // event listeners
+    // Set up event listeners
     applyFiltersBtn.addEventListener('click', async () => {
         await loadEmployees();
         await loadCompensationChart();
@@ -57,14 +58,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
+// Show loading spinner
 function showLoading() {
     loadingSpinner.style.display = 'flex';
 }
+
+// Hide loading spinner
 function hideLoading() {
     loadingSpinner.style.display = 'none';
 }
 
-// roles dropdown
+// Load roles dropdown
 async function loadRoles() {
     try {
         showLoading();
@@ -85,7 +89,7 @@ async function loadRoles() {
     }
 }
 
-// locations dropdown
+// Load locations dropdown
 async function loadLocations() {
     try {
         showLoading();
@@ -106,7 +110,7 @@ async function loadLocations() {
     }
 }
 
-// employees table with pagination
+// Load employees table with pagination
 async function loadEmployees(page = 1) {
     try {
         showLoading();
@@ -129,9 +133,9 @@ async function loadEmployees(page = 1) {
         const endIndex = Math.min(startIndex + itemsPerPage, allEmployees.length);
         const paginatedEmployees = allEmployees.slice(startIndex, endIndex);
 
+        // Clear existing table rows
         employeesTable.innerHTML = '';
-
-        // new rows
+        // Add new rows
         paginatedEmployees.forEach(employee => {
             const row = document.createElement('tr');
             row.className = 'fade-in';
@@ -142,7 +146,7 @@ async function loadEmployees(page = 1) {
                             <td>${employee.location}</td>
                             <td>${employee.experienceRange || '-'}</td>
                             <td>₹${employee.currentCompensation?.toLocaleString('en-IN') || '0'}</td>
-                            <td>₹${compensationMode === "global" ? (employee.currentCompensation * (100 + Number(globalIncrement.value)) / 100)?.toLocaleString('en-IN') : (employee.currentCompensation * (100 + Number(locationIncrements[employee.location])) / 100)?.toLocaleString('en-IN')}</td>
+                            <td>₹${compensationMode === "global" ? (employee.currentCompensation * (100 + Number(globalIncrement.value)) / 100)?.toLocaleString('en-IN') : (employee.currentCompensation * (100 + (Number(locationIncrements[employee.location])||0)) / 100)?.toLocaleString('en-IN')}</td>
                             <td>
                                 <span class="badge rounded-pill ${employee.isActive ? 'bg-success' : 'bg-danger'}">
                                     ${employee.isActive ? 'Active' : 'Inactive'}
@@ -153,7 +157,10 @@ async function loadEmployees(page = 1) {
             employeesTable.appendChild(row);
         });
 
+        // Update pagination
         updatePagination(totalPages, page);
+
+        // Load compensation stats
         loadCompensationStats();
     } catch (error) {
         console.error('Error loading employees:', error);
@@ -229,6 +236,8 @@ async function loadCompensationChart() {
         // Prepare chart data
         const locations = stats.map(stat => stat.location);
         const averages = stats.map(stat => stat.averageCompensation);
+
+        // Destroy previous chart if it exists
         if (compensationChart) {
             compensationChart.destroy();
         }
@@ -354,7 +363,9 @@ async function loadExperienceGroups() {
         const response = await fetch(url);
         const groups = await response.json();
 
+        
         groupByHeader.textContent = groupByValue || '-';
+
         experienceTable.innerHTML = '';
 
         groups.forEach(group => {
@@ -380,12 +391,15 @@ async function loadExperienceGroups() {
     }
 }
 
+// Update experience chart
 function updateExperienceChart(groups, groupByValue, chartType) {
     if (experienceChart) {
         experienceChart.destroy();
     }
 
     const ctx = document.getElementById('experienceChart').getContext('2d');
+
+    // Prepare data based on grouping
     let datasets = [];
     let labels = [];
 
@@ -486,8 +500,10 @@ function updateExperienceChart(groups, groupByValue, chartType) {
             } : undefined
         }
     };
+
     experienceChart = new Chart(ctx, config);
 }
+
 function getChartColors(count, opacity = 1) {
     const colors = [];
     const hueStep = 360 / count;
@@ -499,19 +515,25 @@ function getChartColors(count, opacity = 1) {
 
     return colors;
 }
+
+// Reset all filters
 function resetFilters() {
     roleFilter.value = '';
     locationFilter.value = '';
-    experienceFilter.value = '';
+    //experienceFilter.value = '';
     includeInactive.checked = false;
     loadEmployees();
     loadCompensationChart();
 }
+
+// Export data to CSV
 function exportToCSV() {
     if (allEmployees.length === 0) {
         showError('No data to export');
         return;
     }
+
+    // data for export
     const dataToExport = allEmployees.map(emp => ({
         Name: emp.name,
         Role: emp.role,
@@ -523,7 +545,6 @@ function exportToCSV() {
 
     const csv = Papa.unparse(dataToExport);
 
-    // Download CSV
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -534,9 +555,11 @@ function exportToCSV() {
     document.body.removeChild(link);
 }
 
+// Show error message
 function showError(message) {
     alert(message);
 }
+
 let compensationMode = 'global';
 let locationIncrements = {};
 
@@ -545,6 +568,8 @@ document.getElementById('customMode').addEventListener('change', updateCompensat
 
 function updateCompensationModeUI() {
     compensationMode = document.getElementById('globalMode').checked ? 'global' : 'custom';
+
+    // Show/hide appropriate controls
     document.getElementById('globalIncrementContainer').classList.toggle('d-none', compensationMode === 'custom');
     document.getElementById('customIncrementsPanel').classList.toggle('d-none', compensationMode === 'global');
 }
@@ -558,10 +583,10 @@ function initializeLocationIncrementInputs() {
     container.innerHTML = locations.map(location => `
         <div class="col-md-3 mb-3">
             <div class="increment-control">
-                <label for="loc-inc-${location.replace(/\s+/g, '-')}">${location}</label>
+                <label for="${location}">${location}</label>
                 <div class="input-group">
                     <input type="number" class="form-control location-increment-input" 
-                           id="loc-inc-${location.replace(/\s+/g, '-')}
+                           id="${location}"
                            min="0" max="100" step="1"
                            value="${locationIncrements[location] || 0}">
                     <span class="input-group-text">%</span>
@@ -572,14 +597,10 @@ function initializeLocationIncrementInputs() {
 
     document.querySelectorAll('.location-increment-input').forEach(input => {
         input.addEventListener('change', function () {
-            const location = this.id.replace('loc-inc-', '').replace(/-/g, ' ');
-            const value = parseFloat(this.value);
-
-            if (!isNaN(value)) {
-                locationIncrements[location] = value;
-            } else {
-                delete locationIncrements[location];
-            }
+            const location = this.id;
+            const value = Number(this.value);
+            locationIncrements[location] = value;
+            
         });
     });
 }
