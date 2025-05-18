@@ -1,6 +1,13 @@
 ```markdown
 # Employee Compensation Dashboard
 
+To create an executable file, run the following command.
+csc Program.cs
+```
+
+To run the executable file, run the following command.
+``` Program ```
+
 ![Dashboard Screenshot](./screenshots/dashboard.png)
 
 A web application for analyzing employee compensation data with simulation capabilities.
@@ -67,10 +74,6 @@ A web application for analyzing employee compensation data with simulation capab
    ```
    https://localhost:5001/index.html
    ```
-
-3. Default credentials (if applicable):
-   - Username: admin
-   - Password: admin123
 
 ## User Stories
 
